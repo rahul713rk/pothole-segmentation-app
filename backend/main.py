@@ -31,7 +31,7 @@ class Config:
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict this
+    allow_origins=['https://pothole-segmentation-app.vercel.app/'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

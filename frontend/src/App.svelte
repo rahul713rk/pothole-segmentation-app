@@ -29,7 +29,7 @@
 
 <main>
   <div class="container">
-    <h1>Image Segmentation App</h1>
+    <h1>Image Segmentation App for Pothole Detection</h1>
     
     <ImageUpload 
       on:predictionResult={handlePredictionResult}

@@ -1,8 +1,4 @@
-from grpc import protos
-import numpy as np
 import onnxruntime as ort
-from typing import Tuple, List
-import cv2
 import os
 
 class ModelConfig:
