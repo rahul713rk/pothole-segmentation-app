@@ -38,51 +38,39 @@
   };
   
   // Handle predict button click
-  const handlePredict = async () => {
-    if (!selectedFile) {
-        alert('Please select an image first.');
-        return;
-    }
+const handlePredict = async () => {
+    if (!selectedFile) return;
     
     dispatch('loading', true);
     
     try {
         const formData = new FormData();
         formData.append('file', selectedFile);
-        
+
         const response = await fetch(API_URL, {
             method: 'POST',
             body: formData,
-            // Add headers if needed
             headers: {
                 'Accept': 'application/json',
             },
         });
-        
+
         if (!response.ok) {
-            let errorMsg = 'Failed to process image';
-            try {
-                const errorData = await response.json();
-                errorMsg = errorData.detail || errorMsg;
-            } catch (e) {
-                errorMsg = `HTTP error! status: ${response.status}`;
-            }
-            throw new Error(errorMsg);
+            const error = await response.json().catch(() => null);
+            throw new Error(error?.detail || `HTTP ${response.status}`);
         }
-        
-        const resultData = await response.json();
-        dispatch('predictionResult', resultData);
-        
+
+        const result = await response.json();
+        if (!result.original_image || !result.segmentation_image) {
+            throw new Error("Invalid response format");
+        }
+
+        dispatch('predictionResult', result);
     } catch (error) {
-        console.error('Error making prediction:', error);
-        dispatch('error', error.message);
-        
-        // For debugging - remove in production
-        console.log('Full error object:', error);
-        if (error.response) {
-            console.log('Response status:', error.response.status);
-            console.log('Response text:', await error.response.text());
-        }
+        console.error("Prediction error:", error);
+        dispatch('error', error.message || "Prediction failed");
+    } finally {
+        dispatch('loading', false);
     }
 };
 </script>
