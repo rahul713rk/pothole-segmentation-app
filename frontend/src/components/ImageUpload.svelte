@@ -40,34 +40,51 @@
   // Handle predict button click
   const handlePredict = async () => {
     if (!selectedFile) {
-      alert('Please select an image first.');
-      return;
+        alert('Please select an image first.');
+        return;
     }
     
     dispatch('loading', true);
     
     try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to process image');
-      }
-      
-      const resultData = await response.json();
-      dispatch('predictionResult', resultData);
-      
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData,
+            // Add headers if needed
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+        
+        if (!response.ok) {
+            let errorMsg = 'Failed to process image';
+            try {
+                const errorData = await response.json();
+                errorMsg = errorData.detail || errorMsg;
+            } catch (e) {
+                errorMsg = `HTTP error! status: ${response.status}`;
+            }
+            throw new Error(errorMsg);
+        }
+        
+        const resultData = await response.json();
+        dispatch('predictionResult', resultData);
+        
     } catch (error) {
-      console.error('Error making prediction:', error);
-      dispatch('error', error.message);
+        console.error('Error making prediction:', error);
+        dispatch('error', error.message);
+        
+        // For debugging - remove in production
+        console.log('Full error object:', error);
+        if (error.response) {
+            console.log('Response status:', error.response.status);
+            console.log('Response text:', await error.response.text());
+        }
     }
-  };
+};
 </script>
 
 <div class="image-upload">
