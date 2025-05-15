@@ -38,41 +38,36 @@
   };
   
   // Handle predict button click
-const handlePredict = async () => {
-    if (!selectedFile) return;
+  const handlePredict = async () => {
+    if (!selectedFile) {
+      alert('Please select an image first.');
+      return;
+    }
     
     dispatch('loading', true);
     
     try {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            const error = await response.json().catch(() => null);
-            throw new Error(error?.detail || `HTTP ${response.status}`);
-        }
-
-        const result = await response.json();
-        if (!result.original_image || !result.segmentation_image) {
-            throw new Error("Invalid response format");
-        }
-
-        dispatch('predictionResult', result);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to process image');
+      }
+      
+      const resultData = await response.json();
+      dispatch('predictionResult', resultData);
+      
     } catch (error) {
-        console.error("Prediction error:", error);
-        dispatch('error', error.message || "Prediction failed");
-    } finally {
-        dispatch('loading', false);
+      console.error('Error making prediction:', error);
+      dispatch('error', error.message);
     }
-};
+  };
 </script>
 
 <div class="image-upload">

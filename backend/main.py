@@ -28,17 +28,16 @@ class Config:
     ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/jpg"]
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://pothole-segmentation-gaibscye9-rahul-kumars-projects-5f3adc4a.vercel.app/",  # Without trailing slash
-        "http://localhost:3000",  # For local development
-        "http://localhost:5000",  # For local backend testing
-    ],
+    allow_origins=['https://pothole-segmentation-app.vercel.app/',
+                   '*'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # Global model instance
 model = None
 input_name = output_name = None
@@ -135,17 +134,11 @@ async def predict(file: UploadFile = File(...)):
         original_base64 = image_to_base64(Image.fromarray(original_image))
         result_base64 = image_to_base64(Image.fromarray(result_image))
 
-        response_data = {
+        return JSONResponse({
             "original_image": original_base64,
             "segmentation_image": result_base64,
             "predicted_labels": class_label
-        }
-    
-        response = JSONResponse(content=response_data)
-        response.headers["Access-Control-Allow-Origin"] = "https://pothole-segmentation-app.vercel.app"
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        return response
-
+        })
 
     except Exception as e:
         logger.error(f"Prediction error: {str(e)}", exc_info=True)
