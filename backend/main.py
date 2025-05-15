@@ -3,7 +3,6 @@ import io
 import base64
 import logging
 from typing import List, Optional
-from urllib import request
 
 import numpy as np
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -72,14 +71,10 @@ def preprocess_img(img):
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     """Process uploaded image and return segmentation prediction"""
-    logger.info(f"Received prediction request from {request.client.host if request.client else 'unknown'}")
-    logger.info(f"Headers: {dict(request.headers)}")
     
     if model is None:
         logger.error("Prediction attempted with no model loaded")
         raise HTTPException(status_code=503, detail="Model not loaded")
-
-    logger.info(f"Received file: {file.filename}, content-type: {file.content_type}")
 
     if file.content_type not in Config.ALLOWED_CONTENT_TYPES:
         raise HTTPException(
