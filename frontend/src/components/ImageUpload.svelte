@@ -9,7 +9,7 @@
   let fileInput;
   
   // API endpoint for predictions
-  const API_URL = 'http://localhost:8000/predict';
+  const API_URL = 'https://pothole-segmentation-app.onrender.com/predict';
   
   // Handle file selection
   const handleFileChange = (event) => {

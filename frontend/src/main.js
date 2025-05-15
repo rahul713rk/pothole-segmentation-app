@@ -1,10 +1,8 @@
-const API_URL = 'https://pothole-segmentation-app.onrender.com';
+// src/main.js
+import App from './App.svelte';
 
-const formData = new FormData();
-formData.append('file', selectedFile);
-
-const res = await fetch(`${API_URL}/predict`, {
-  method: 'POST',
-  body: formData,
+const app = new App({
+  target: document.body,
 });
-const data = await res.json();
+
+export default app;

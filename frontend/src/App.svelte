@@ -28,7 +28,7 @@
 </script>
 
 <main>
-  <div class="container">
+  <div class="App">
     <h1>Image Segmentation App for Pothole Detection</h1>
     
     <ImageUpload 
@@ -53,7 +53,7 @@
 </main>
 
 <style>
-  .container {
+  .App {
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem;
